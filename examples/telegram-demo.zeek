@@ -7,8 +7,8 @@ export {
     redef Site::local_nets += { 192.168.1.0/24 };
     redef Known::use_host_store = F;
     global hosts: set[addr];
-    redef Notice::telegram_token "my-telegram-token";
-    redef Notice::telegram_chat_id = "my-chat-id";
+    redef Notice::telegram_token "REDEF-TOKEN";
+    redef Notice::telegram_chat_id = "REDEF-ID";
     }
 
 event zeek_init()
