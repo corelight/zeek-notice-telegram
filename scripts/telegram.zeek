@@ -11,22 +11,17 @@ export {
         ACTION_TELEGRAM,
     };
 
-    type telegram_message: record {
-        chat_id: string;
-        text: string;
-    };
-
     const telegram_endpoint = "https://api.telegram.org";
     # These must be redef'd to work.
     # See https://core.telegram.org/bots/faq#how-do-i-create-a-bot for details
     option telegram_token = "REDEF-TOKEN";
     option telegram_chat_id = "REDEF-ID";
 
-    global telegram_payload: function(n: Notice::Info): Notice::telegram_message;
-    global telegram_send_notice: function(payload: Notice::telegram_message);
+    global telegram_payload: function(n: Notice::Info): string;
+    global telegram_send_notice: function(text: string);
 }
 
-function telegram_send_notice(payload: Notice::telegram_message)
+function telegram_send_notice(text: string)
     {
     if (telegram_token == "REDEF-TOKEN" || telegram_chat_id == "REDEF-ID")
         {
@@ -37,7 +32,7 @@ function telegram_send_notice(payload: Notice::telegram_message)
     local request: ActiveHTTP::Request = ActiveHTTP::Request(
         $url=url,
         $method="POST",
-        $client_data=fmt("chat_id=%s&text=%s", payload$chat_id, payload$text)
+        $client_data=fmt("chat_id=%s&text=%s", telegram_chat_id, text)
     );
 
     when ( local result = ActiveHTTP::request(request) )
@@ -47,7 +42,7 @@ function telegram_send_notice(payload: Notice::telegram_message)
         }
     }
 
-function telegram_payload(n: Notice::Info): Notice::telegram_message
+function telegram_payload(n: Notice::Info): string
     {
     local text = fmt("%s: %s", n$note, n$msg);
     if ( n?$sub )
@@ -66,8 +61,7 @@ function telegram_payload(n: Notice::Info): Notice::telegram_message
     else if ( n?$src )
         text = string_cat(text, fmt(", Source: %s", n$src));
 
-    local message: telegram_message = telegram_message($text=text, $chat_id=telegram_chat_id);
-    return message;
+    return text;
     }
 
 hook notice(n: Notice::Info)
