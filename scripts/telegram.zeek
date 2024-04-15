@@ -35,9 +35,11 @@ function telegram_send_notice(text: string)
         $client_data=fmt("chat_id=%s&text=%s", telegram_chat_id, text)
     );
 
-    local result = ActiveHTTP::request(request);
-    when [result] ( result$code != 200 )
+    when [request] ( local result = ActiveHTTP::request(request) )
         {
+            if ( result$code == 200 )
+                return;
+
             Reporter::warning(fmt("Telegram notice failed (%d): %s", result$code, result$body));
         }
     }
