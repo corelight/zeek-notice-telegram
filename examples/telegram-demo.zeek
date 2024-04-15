@@ -5,7 +5,7 @@ module TelegramDemo;
 export {
     redef enum Notice::Type += { NewKnownHost };
     redef Site::local_nets += { 192.168.1.0/24 };
-    redef Notice::telegram_token "REDEF-TOKEN";
+    redef Notice::telegram_token = "REDEF-TOKEN";
     redef Notice::telegram_chat_id = "REDEF-ID";
     global hosts: set[addr];
     }
